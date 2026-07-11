@@ -15,8 +15,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Encode Sans"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        sans: ['"Instrument Sans"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
         serif: ['Merriweather', 'Georgia', 'Cambria', '"Times New Roman"', 'serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,6 +52,22 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        sidebar: "hsl(var(--sidebar))",
+        "primary-tint": {
+          DEFAULT: "hsl(var(--primary-tint))",
+          border: "hsl(var(--primary-tint-border))",
+        },
+        "nav-selected": "hsl(var(--nav-selected))",
+        "user-bubble": {
+          DEFAULT: "hsl(var(--user-bubble-bg))",
+          foreground: "hsl(var(--user-bubble-text))",
+        },
+        np: {
+          DEFAULT: "hsl(var(--np-bg))",
+          border: "hsl(var(--np-border))",
+          foreground: "hsl(var(--np-text))",
+          hover: "hsl(var(--np-bg-hover))",
         },
       },
       borderRadius: {

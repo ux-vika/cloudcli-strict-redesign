@@ -1,3 +1,12 @@
+/* Strict UI/mono шрифты (self-hosted) */
+@import "@fontsource/instrument-sans/400.css";
+@import "@fontsource/instrument-sans/500.css";
+@import "@fontsource/instrument-sans/600.css";
+@import "@fontsource/instrument-sans/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,26 +32,39 @@
 
 @layer base {
   :root {
-    --background: 44 22% 96%;
-    --foreground: 36 25% 4%;
+    /* Strict Light */
+    --background: 0 0% 100%;
+    --foreground: 220.9 39.3% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 36 25% 4%;
+    --card-foreground: 220.9 39.3% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 36 25% 4%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 44 15% 91%;
-    --secondary-foreground: 36 15% 18%;
-    --muted: 44 15% 91%;
-    --muted-foreground: 40 5% 44%;
-    --accent: 44 15% 91%;
-    --accent-foreground: 36 15% 18%;
+    --popover-foreground: 220.9 39.3% 11%;
+    --primary: 224.3 76.3% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217.5 22.2% 92.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 216 17.2% 94.3%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 216 17.2% 94.3%;
+    --accent-foreground: 220.9 39.3% 11%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 44 14% 87%;
-    --input: 44 14% 87%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217.5 16% 90.2%;
+    --input: 217.5 16% 90.2%;
+    --ring: 224.3 76.3% 48%;
+    --radius: 0.625rem;
+
+    /* Strict — дополнительные токены */
+    --sidebar: 220 23.1% 97.5%;
+    --primary-tint: 225 88.9% 96.5%;
+    --primary-tint-border: 221.7 69.7% 87.1%;
+    --nav-selected: 217.5 22.2% 92.9%;
+    --user-bubble-bg: 218.8 68% 95.1%;
+    --user-bubble-text: 215 27.9% 16.9%;
+    --np-bg: 224.5 79.5% 92.4%;
+    --np-border: 223.3 75% 85.9%;
+    --np-text: 224.3 76.3% 48%;
+    --np-bg-hover: 224.6 76.5% 90%;
 
     /* Nav design tokens */
     --nav-glass-bg: 44 22% 96% / 0.7;
@@ -85,25 +107,38 @@
   }
 
   .dark {
-    --background: 0 0% 8%;
-    --foreground: 40 8% 93%;
-    --card: 0 0% 12%;
-    --card-foreground: 40 8% 93%;
-    --popover: 0 0% 12%;
-    --popover-foreground: 40 8% 93%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 0 0% 8%;
-    --secondary: 0 0% 17%;
-    --secondary-foreground: 40 8% 93%;
-    --muted: 0 0% 17%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 17%;
-    --accent-foreground: 40 8% 93%;
+    /* Strict Dark */
+    --background: 220 16.7% 7.1%;
+    --foreground: 216 20% 95.1%;
+    --card: 225 16.7% 9.4%;
+    --card-foreground: 216 20% 95.1%;
+    --popover: 225 16.7% 9.4%;
+    --popover-foreground: 216 20% 95.1%;
+    --primary: 219.7 82.2% 64.7%;
+    --primary-foreground: 220 16.7% 7.1%;
+    --secondary: 223.6 17.5% 12.4%;
+    --secondary-foreground: 216 20% 95.1%;
+    --muted: 225 16.7% 14.1%;
+    --muted-foreground: 219 8.9% 56.1%;
+    --accent: 225 16.7% 14.1%;
+    --accent-foreground: 216 20% 95.1%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 40 8% 93%;
-    --border: 0 0% 17%;
-    --input: 0 0% 23%;
-    --ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: 216 20% 95.1%;
+    --border: 221.5 14.6% 17.5%;
+    --input: 221.5 14.6% 17.5%;
+    --ring: 219.7 82.2% 64.7%;
+
+    /* Strict — дополнительные токены (dark) */
+    --sidebar: 225 18.2% 8.6%;
+    --primary-tint: 218.6 35% 15.7%;
+    --primary-tint-border: 220.4 31.9% 28.2%;
+    --nav-selected: 220 10.6% 16.7%;
+    --user-bubble-bg: 218.9 33.9% 21.4%;
+    --user-bubble-text: 220 31.6% 92.5%;
+    --np-bg: 218.6 35% 15.7%;
+    --np-border: 220.4 31.9% 28.2%;
+    --np-text: 219.7 82.2% 64.7%;
+    --np-bg-hover: 219 37% 21.2%;
 
     /* Nav design tokens — dark overrides */
     --nav-glass-bg: 0 0% 12% / 0.55;
@@ -129,7 +164,7 @@
   body {
     @apply bg-background text-foreground;
 
-    font-family: "Encode Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0;
