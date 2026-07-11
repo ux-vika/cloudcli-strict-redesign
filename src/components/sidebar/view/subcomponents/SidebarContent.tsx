@@ -12,6 +12,7 @@ import { getAllSessions } from '../../utils/utils';
 
 import SidebarFooter from './SidebarFooter';
 import SidebarHeader from './SidebarHeader';
+import SidebarNav from './SidebarNav';
 import SidebarProjectList, { type SidebarProjectListProps } from './SidebarProjectList';
 
 function HighlightedSnippet({ snippet, highlights }: { snippet: string; highlights: { start: number; end: number }[] }) {
@@ -194,7 +195,7 @@ export default function SidebarContent({
 
   return (
     <div
-      className="flex h-full flex-col bg-background/80 backdrop-blur-sm md:w-72 md:select-none"
+      className="flex h-full flex-col bg-sidebar md:w-72 md:select-none"
       style={{}}
     >
       <SidebarHeader
@@ -214,6 +215,14 @@ export default function SidebarContent({
         isRefreshing={isRefreshing}
         onCreateProject={onCreateProject}
         onCollapseSidebar={onCollapseSidebar}
+        t={t}
+      />
+
+      <SidebarNav
+        searchMode={searchMode}
+        onSearchModeChange={onSearchModeChange}
+        onCreateProject={onCreateProject}
+        runningSessionsCount={runningSessionsCount}
         t={t}
       />
 

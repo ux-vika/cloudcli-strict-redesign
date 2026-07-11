@@ -103,59 +103,32 @@ export default function SidebarFooter({
         </>
       )}
 
-      {/* Community + Settings */}
-      <div className="nav-divider" />
-
-      {/* Desktop Report Issue */}
-      <div className="hidden px-2 pt-1.5 md:block">
-        <a
-          href={GITHUB_ISSUES_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
-        >
-          <Bug className="h-3.5 w-3.5" />
-          <span className="text-sm">{t('actions.reportIssue')}</span>
-        </a>
-      </div>
-
-      {/* Desktop Discord */}
-      <div className="hidden px-2 md:block">
-        <a
-          href={DISCORD_INVITE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
-        >
-          <DiscordIcon className="h-3.5 w-3.5" />
-          <span className="text-sm">{t('actions.joinCommunity')}</span>
-        </a>
-      </div>
-
-      {/* Desktop settings */}
-      <div className="hidden px-2 py-1.5 md:block">
-        <button
-          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent/60 hover:text-foreground"
-          onClick={onShowSettings}
-        >
-          <Settings className="h-3.5 w-3.5" />
-          <span className="text-sm">{t('actions.settings')}</span>
-        </button>
-      </div>
-
-      {/* Desktop version brand line (OSS mode only) */}
-      {!IS_PLATFORM && (
-        <div className="hidden px-3 py-2 text-center md:block">
-          <a
-            href={GITHUB_REPO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] text-muted-foreground/40 transition-colors hover:text-muted-foreground"
+      {/* Settings + версия (strict: только они, по макету) */}
+      <div className="hidden border-t border-border md:block">
+        <div className="px-3 pb-1 pt-2">
+          <button
+            className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            onClick={onShowSettings}
           >
-            CloudCLI v{currentVersion} – {t('branding.openSource')}
-          </a>
+            <Settings className="h-[15px] w-[15px]" />
+            <span className="text-[13px]">{t('actions.settings')}</span>
+          </button>
         </div>
-      )}
+
+        {/* Версия (OSS mode only) */}
+        {!IS_PLATFORM && (
+          <div className="px-5 pb-3">
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              CloudCLI v{currentVersion}
+            </a>
+          </div>
+        )}
+      </div>
 
       {/* Mobile Report Issue */}
       <div className="px-3 pt-3 md:hidden">

@@ -62,30 +62,30 @@ export default function MainContentTitle({
   return (
     <div className="scrollbar-hide flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
       {showSessionIcon && (
-        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center">
-          <SessionProviderLogo provider={selectedSession?.__provider} className="h-4 w-4" />
+        <div className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center">
+          <SessionProviderLogo provider={selectedSession?.__provider} className="h-[26px] w-[26px]" />
         </div>
       )}
 
       <div className="min-w-0 flex-1">
         {activeTab === 'chat' && selectedSession ? (
           <div className="min-w-0">
-            <h2 title={getSessionTitle(selectedSession)} className="truncate text-sm font-semibold leading-tight text-foreground">
+            <h2 title={getSessionTitle(selectedSession)} className="truncate text-[14.5px] font-bold leading-tight text-foreground">
               {getSessionTitle(selectedSession)}
             </h2>
-            <div className="truncate text-[11px] leading-tight text-muted-foreground">{selectedProject.displayName}</div>
+            <div className="truncate text-[11.5px] leading-tight text-muted-foreground">{selectedProject.displayName}</div>
           </div>
         ) : showChatNewSession ? (
           <div className="min-w-0">
-            <h2 className="text-base font-semibold leading-tight text-foreground">{t('mainContent.newSession')}</h2>
+            <h2 className="text-[14.5px] font-bold leading-tight text-foreground">{t('mainContent.newSession')}</h2>
             <div className="truncate text-xs leading-tight text-muted-foreground">{selectedProject.displayName}</div>
           </div>
         ) : (
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold leading-tight text-foreground">
+            <h2 className="text-[14.5px] font-bold leading-tight text-foreground">
               {getTabTitle(activeTab, shouldShowTasksTab, t, pluginDisplayName)}
             </h2>
-            <div className="truncate text-[11px] leading-tight text-muted-foreground">{selectedProject.displayName}</div>
+            <div className="truncate text-[11.5px] leading-tight text-muted-foreground">{selectedProject.displayName}</div>
           </div>
         )}
       </div>

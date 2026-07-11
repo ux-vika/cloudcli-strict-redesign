@@ -264,8 +264,8 @@ export default function SidebarProjectItem({
         <Button
           variant="ghost"
           className={cn(
-            'hidden md:flex w-full justify-between p-2 h-auto font-normal hover:bg-accent/50',
-            isSelected && 'bg-accent text-accent-foreground',
+            'hidden md:flex w-full justify-between rounded-md px-2.5 py-2 h-auto font-normal hover:bg-secondary',
+            isSelected && 'bg-nav-selected text-foreground',
             isStarred &&
               !isSelected &&
               'bg-yellow-50/50 dark:bg-yellow-900/10 hover:bg-yellow-100/50 dark:hover:bg-yellow-900/20',
@@ -278,7 +278,7 @@ export default function SidebarProjectItem({
                 'w-6 h-6 flex items-center justify-center rounded cursor-pointer transition-all duration-200',
                 isStarred
                   ? 'hover:bg-yellow-50 dark:hover:bg-yellow-900/20'
-                  : 'opacity-40 hover:opacity-100 hover:bg-accent',
+                  : 'opacity-0 group-hover:opacity-100 hover:bg-secondary',
               )}
               onClick={(event) => {
                 event.stopPropagation();
@@ -319,19 +319,11 @@ export default function SidebarProjectItem({
                   </div>
                 </div>
               ) : (
-                <div>
-                  <div className="truncate text-sm font-normal text-foreground" title={project.displayName}>
-                    {project.displayName}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {sessionCountDisplay}
-                    {project.fullPath !== project.displayName && (
-                      <span className="ml-1 opacity-60" title={project.fullPath}>
-                        {' - '}
-                        {project.fullPath.length > 25 ? `...${project.fullPath.slice(-22)}` : project.fullPath}
-                      </span>
-                    )}
-                  </div>
+                <div
+                  className="truncate text-[13px] font-normal text-foreground"
+                  title={`${project.displayName} · ${sessionCountDisplay} · ${project.fullPath}`}
+                >
+                  {project.displayName}
                 </div>
               )}
             </div>
