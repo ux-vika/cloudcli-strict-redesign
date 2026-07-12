@@ -1,4 +1,5 @@
-import { Check, ChevronDown, ChevronRight, Edit3, Star, Trash2, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Check, ChevronDown, ChevronRight, Edit3, MoreHorizontal, Star, Trash2, X } from 'lucide-react';
 import type { TFunction } from 'i18next';
 
 import { Button } from '../../../../shared/view/ui';
@@ -100,6 +101,19 @@ export default function SidebarProjectItem({
   // after the projectName → projectId migration.
   const isSelected = selectedProject?.projectId === project.projectId;
   const isEditing = editingProject === project.projectId;
+  // Меню «⋯» (переименовать/удалить) — по правкам дизайна прячем действия строки
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handle = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [isMenuOpen]);
   const totalSessionCount = Number(project.sessionMeta?.total ?? sessions.length);
   const sessionCountDisplay = getSessionCountDisplay(project, sessions);
   const sessionCountLabel = `${sessionCountDisplay} session${totalSessionCount === 1 ? '' : 's'}`;
@@ -273,28 +287,6 @@ export default function SidebarProjectItem({
           onClick={selectAndToggleProject}
         >
           <div className="flex min-w-0 flex-1 items-center gap-3">
-            <div
-              className={cn(
-                'w-6 h-6 flex items-center justify-center rounded cursor-pointer transition-all duration-200',
-                isStarred
-                  ? 'hover:bg-yellow-50 dark:hover:bg-yellow-900/20'
-                  : 'opacity-0 group-hover:opacity-100 hover:bg-secondary',
-              )}
-              onClick={(event) => {
-                event.stopPropagation();
-                toggleStarProject();
-              }}
-              title={isStarred ? t('tooltips.removeFromFavorites') : t('tooltips.addToFavorites')}
-            >
-              <Star
-                className={cn(
-                  'w-3 h-3 transition-colors',
-                  isStarred
-                    ? 'text-yellow-600 dark:text-yellow-400 fill-current'
-                    : 'text-muted-foreground',
-                )}
-              />
-            </div>
             <div className="min-w-0 flex-1 text-left">
               {isEditing ? (
                 <div className="space-y-1">
@@ -354,24 +346,60 @@ export default function SidebarProjectItem({
             ) : (
               <>
                 <div
-                  className="touch:opacity-100 flex h-6 w-6 cursor-pointer items-center justify-center rounded opacity-0 transition-all duration-200 hover:bg-accent group-hover:opacity-100"
+                  className={cn(
+                    'touch:opacity-100 flex h-6 w-6 cursor-pointer items-center justify-center rounded transition-all duration-200 hover:bg-secondary',
+                    isStarred ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+                  )}
                   onClick={(event) => {
                     event.stopPropagation();
-                    onStartEditingProject(project);
+                    toggleStarProject();
                   }}
-                  title={t('tooltips.renameProject')}
+                  title={isStarred ? t('tooltips.removeFromFavorites') : t('tooltips.addToFavorites')}
                 >
-                  <Edit3 className="h-3 w-3" />
+                  <Star
+                    className={cn(
+                      'h-3 w-3 transition-colors',
+                      isStarred ? 'fill-current text-yellow-500' : 'text-muted-foreground',
+                    )}
+                  />
                 </div>
-                <div
-                  className="touch:opacity-100 flex h-6 w-6 cursor-pointer items-center justify-center rounded opacity-0 transition-all duration-200 hover:bg-red-50 group-hover:opacity-100 dark:hover:bg-red-900/20"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onDeleteProject(project);
-                  }}
-                  title={t('tooltips.deleteProject')}
-                >
-                  <Trash2 className="h-3 w-3 text-red-600 dark:text-red-400" />
+                <div ref={menuRef} className="relative">
+                  <div
+                    className="touch:opacity-100 flex h-6 w-6 cursor-pointer items-center justify-center rounded opacity-0 transition-all duration-200 hover:bg-secondary group-hover:opacity-100"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setIsMenuOpen((open) => !open);
+                    }}
+                    title={t('tooltips.moreActions', 'More actions')}
+                  >
+                    <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+                  </div>
+                  {isMenuOpen && (
+                    <div className="absolute right-0 top-full z-50 mt-1 w-40 rounded-md border border-border bg-card p-1 shadow-lg">
+                      <div
+                        className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-[12.5px] text-foreground hover:bg-secondary"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setIsMenuOpen(false);
+                          onStartEditingProject(project);
+                        }}
+                      >
+                        <Edit3 className="h-3 w-3" />
+                        {t('tooltips.renameProject')}
+                      </div>
+                      <div
+                        className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-[12.5px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setIsMenuOpen(false);
+                          onDeleteProject(project);
+                        }}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        {t('tooltips.deleteProject')}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {isExpanded ? (
                   <ChevronDown className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground" />

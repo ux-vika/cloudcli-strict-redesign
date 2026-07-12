@@ -11,7 +11,7 @@ import type {
   RefObject,
   TouchEvent,
 } from 'react';
-import { Paperclip, ShieldIcon, SlidersHorizontal, MessageSquareIcon, XIcon, Loader2, ChevronDown, Check, ArrowUpIcon } from 'lucide-react';
+import { Paperclip, ShieldIcon, SlidersHorizontal, MessageSquareIcon, XIcon, Loader2, ChevronDown, Check, ArrowUpIcon, Mic, Square } from 'lucide-react';
 
 import { useVoiceInput } from '../../hooks/useVoiceInput';
 import { useVoiceAvailable } from '../../hooks/useVoiceAvailable';
@@ -33,7 +33,6 @@ import {
 import CommandMenu from './CommandMenu';
 import ActivityIndicator from './ActivityIndicator';
 import ImageAttachment from './ImageAttachment';
-import VoiceInputButton from './VoiceInputButton';
 import PermissionRequestsBanner from './PermissionRequestsBanner';
 import TokenUsageSummary from './TokenUsageSummary';
 import QueuedMessageCard from './QueuedMessageCard';
@@ -434,10 +433,6 @@ export default function ChatComposer({
               <Paperclip />
             </PromptInputButton>
 
-            {onVoiceTranscript && voiceAvailable && (
-              <VoiceInputButton state={voiceState} onToggle={voiceToggle} errorMsg={voiceError} />
-            )}
-
             <button
               type="button"
               onClick={onModeSwitch}
@@ -559,33 +554,68 @@ export default function ChatComposer({
             >
               {submitHint}
             </div>
-            <PromptInputSubmit
-              onClick={
-                canQueueDraft
-                  ? (e: MouseEvent<HTMLButtonElement>) => {
-                      e.preventDefault();
-                      onSubmit(e);
-                    }
-                  : isLoading
-                    ? onAbortSession
-                    : isRecording
+            {/* Пустое поле + доступен голос → большой mic (по макету); иначе — send */}
+            {(() => {
+              const showMic = Boolean(
+                onVoiceTranscript && voiceAvailable && !input.trim() && !isLoading && !isTranscribing && !canQueueDraft,
+              );
+              if (showMic) {
+                return (
+                  <span className="relative inline-flex">
+                    {voiceError && (
+                      <span className="absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap rounded bg-red-600 px-2 py-1 text-xs text-white shadow-lg">
+                        {voiceError}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        voiceToggle();
+                      }}
+                      className={`flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${
+                        isRecording
+                          ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+                          : 'bg-primary-tint text-primary hover:bg-primary-tint/70'
+                      }`}
+                      aria-label={isRecording ? 'Stop recording' : 'Voice input'}
+                      title={isRecording ? 'Stop recording' : 'Voice input'}
+                    >
+                      {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-5 w-5" />}
+                    </button>
+                  </span>
+                );
+              }
+              return (
+                <PromptInputSubmit
+                  onClick={
+                    canQueueDraft
                       ? (e: MouseEvent<HTMLButtonElement>) => {
                           e.preventDefault();
-                          voiceStop({ send: true });
+                          onSubmit(e);
                         }
-                      : undefined
-              }
-              disabled={isLoading ? false : isRecording ? false : isTranscribing ? true : !input.trim()}
-              aria-label={submitAriaLabel}
-              title={submitAriaLabel}
-              className="h-10 w-10 sm:h-10 sm:w-10"
-            >
-              {isTranscribing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : canQueueDraft ? (
-                <ArrowUpIcon className="h-4 w-4" />
-              ) : undefined}
-            </PromptInputSubmit>
+                      : isLoading
+                        ? onAbortSession
+                        : isRecording
+                          ? (e: MouseEvent<HTMLButtonElement>) => {
+                              e.preventDefault();
+                              voiceStop({ send: true });
+                            }
+                          : undefined
+                  }
+                  disabled={isLoading ? false : isRecording ? false : isTranscribing ? true : !input.trim()}
+                  aria-label={submitAriaLabel}
+                  title={submitAriaLabel}
+                  className="h-10 w-10 sm:h-10 sm:w-10"
+                >
+                  {isTranscribing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : canQueueDraft ? (
+                    <ArrowUpIcon className="h-4 w-4" />
+                  ) : undefined}
+                </PromptInputSubmit>
+              );
+            })()}
           </div>
         </PromptInputFooter>
       </PromptInput>

@@ -228,6 +228,12 @@ function Sidebar({
           updateAvailable={updateAvailable}
           restartRequired={restartRequired}
           onShowVersionModal={() => setShowVersionModal(true)}
+          searchMode={searchMode}
+          onSearchModeChange={(mode) => {
+            setSearchMode(mode);
+            handleExpandSidebar();
+          }}
+          onCreateProject={() => setShowNewProject(true)}
           t={t}
         />
       ) : (
