@@ -1,9 +1,10 @@
-import { type ReactNode } from 'react';
-import { Activity, Archive, Folder, MessageSquare, RotateCcw, Search, Trash2 } from 'lucide-react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Activity, Archive, Check, Edit2, Folder, MessageSquare, MoreHorizontal, RotateCcw, Search, Trash2, X } from 'lucide-react';
 import type { TFunction } from 'i18next';
 
 import { ScrollArea } from '../../../../shared/view/ui';
 import type { Project } from '../../../../types/app';
+import type { SessionWithProvider } from '../../types/types';
 import type { ReleaseInfo } from '../../../../types/sharedTypes';
 import type { ConversationSearchResults, SearchProgress } from '../../hooks/useSidebarController';
 import type { ArchivedProjectListItem, ArchivedSessionListItem, SidebarSearchMode } from '../../types/types';
@@ -36,6 +37,139 @@ function HighlightedSnippet({ snippet, highlights }: { snippet: string; highligh
     <span className="min-w-0 flex-1 break-words text-xs leading-relaxed text-muted-foreground">
       {parts}
     </span>
+  );
+}
+
+type ChatListItemProps = {
+  project: Project;
+  session: SessionWithProvider;
+  age: string;
+  isEditing: boolean;
+  editingSessionName: string;
+  onOpen: () => void;
+  onEditingSessionNameChange: (value: string) => void;
+  onStartEditingSession: (sessionId: string, initialName: string) => void;
+  onCancelEditingSession: () => void;
+  onSaveEditingSession: () => void;
+  onDelete: () => void;
+  t: TFunction;
+};
+
+/**
+ * Строка вкладки Chats: чат из любого проекта + меню «⋯» (Rename/Delete).
+ * Использует те же хендлеры, что и список проектов, — изменения общие.
+ */
+function ChatListItem({
+  project,
+  session,
+  age,
+  isEditing,
+  editingSessionName,
+  onOpen,
+  onEditingSessionNameChange,
+  onStartEditingSession,
+  onCancelEditingSession,
+  onSaveEditingSession,
+  onDelete,
+  t,
+}: ChatListItemProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handle = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [isMenuOpen]);
+
+  const sessionName =
+    typeof session.summary === 'string' && session.summary.trim().length > 0
+      ? session.summary
+      : typeof session.name === 'string' && session.name.trim().length > 0
+        ? session.name
+        : String(session.id);
+
+  return (
+    <div className={`group relative flex w-full items-center gap-2 rounded-md px-2.5 py-2 transition-colors hover:bg-secondary ${isMenuOpen ? 'z-50' : ''}`}>
+      <SessionProviderLogo provider={session.__provider} className="h-3.5 w-3.5 flex-shrink-0" />
+      {isEditing ? (
+        <span className="flex min-w-0 flex-1 items-center gap-1">
+          <input
+            type="text"
+            value={editingSessionName}
+            onChange={(event) => onEditingSessionNameChange(event.target.value)}
+            onKeyDown={(event) => {
+              event.stopPropagation();
+              if (event.key === 'Enter') onSaveEditingSession();
+              if (event.key === 'Escape') onCancelEditingSession();
+            }}
+            className="w-full min-w-0 flex-1 rounded border border-border bg-background px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+            autoFocus
+          />
+          <button
+            className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded hover:bg-secondary"
+            onClick={onSaveEditingSession}
+            title={t('tooltips.save')}
+          >
+            <Check className="h-3 w-3 text-green-600" />
+          </button>
+          <button
+            className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded hover:bg-secondary"
+            onClick={onCancelEditingSession}
+            title={t('tooltips.cancel')}
+          >
+            <X className="h-3 w-3 text-muted-foreground" />
+          </button>
+        </span>
+      ) : (
+        <button className="min-w-0 flex-1 text-left" onClick={onOpen}>
+          <span className="block truncate text-[13px] font-normal text-foreground">{sessionName}</span>
+          <span className="block truncate text-[11px] text-muted-foreground">{project.displayName}</span>
+        </button>
+      )}
+      {!isEditing && (
+        <>
+          <div ref={menuRef} className="relative flex-shrink-0">
+            <button
+              className="touch:opacity-100 flex h-6 w-6 items-center justify-center rounded opacity-0 transition-all duration-200 hover:bg-secondary group-hover:opacity-100"
+              onClick={() => setIsMenuOpen((open) => !open)}
+              title={t('tooltips.moreActions', 'More actions')}
+            >
+              <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
+            </button>
+            {isMenuOpen && (
+              <div className="absolute right-0 top-full z-50 mt-1 w-36 overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg">
+                <button
+                  className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12.5px] text-foreground hover:bg-secondary"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onStartEditingSession(String(session.id), sessionName);
+                  }}
+                >
+                  <Edit2 className="h-3 w-3" />
+                  <span className="truncate">{t('nav.rename', 'Rename')}</span>
+                </button>
+                <button
+                  className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12.5px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onDelete();
+                  }}
+                >
+                  <Trash2 className="h-3 w-3" />
+                  <span className="truncate">{t('nav.delete', 'Delete')}</span>
+                </button>
+              </div>
+            )}
+          </div>
+          <span className="flex-shrink-0 font-mono text-[10.5px] text-muted-foreground">{age}</span>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -342,28 +476,37 @@ export default function SidebarContent({
             }
 
             return (
-              <div className="px-1.5 [&>button+button]:border-t [&>button+button]:border-border/60">
+              <div className="px-1.5 [&>div+div]:border-t [&>div+div]:border-border/60">
                 {allChats.map(({ project, session }) => (
-                  <button
+                  <ChatListItem
                     key={`${project.projectId}-${session.id}`}
-                    className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left transition-colors hover:bg-secondary"
-                    onClick={() => onConversationResultClick(project.projectId, String(session.id), session.__provider)}
-                  >
-                    <SessionProviderLogo provider={session.__provider} className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-normal text-foreground">
-                        {(typeof session.summary === 'string' && session.summary.trim().length > 0
-                          ? session.summary
-                          : typeof session.name === 'string' && session.name.trim().length > 0
-                            ? session.name
-                            : String(session.id))}
-                      </span>
-                      <span className="block truncate text-[11px] text-muted-foreground">{project.displayName}</span>
-                    </span>
-                    <span className="ml-auto flex-shrink-0 font-mono text-[10.5px] text-muted-foreground">
-                      {formatCompactArchivedAge(getSessionDate(session).toISOString())}
-                    </span>
-                  </button>
+                    project={project}
+                    session={session}
+                    age={formatCompactArchivedAge(getSessionDate(session).toISOString())}
+                    isEditing={projectListProps.editingSession === String(session.id)}
+                    editingSessionName={projectListProps.editingSessionName}
+                    onOpen={() => onConversationResultClick(project.projectId, String(session.id), session.__provider)}
+                    onEditingSessionNameChange={projectListProps.onEditingSessionNameChange}
+                    onStartEditingSession={projectListProps.onStartEditingSession}
+                    onCancelEditingSession={projectListProps.onCancelEditingSession}
+                    onSaveEditingSession={() =>
+                      projectListProps.onSaveEditingSession(
+                        project.projectId,
+                        String(session.id),
+                        projectListProps.editingSessionName,
+                        session.__provider,
+                      )
+                    }
+                    onDelete={() =>
+                      projectListProps.onDeleteSession(
+                        project.projectId,
+                        String(session.id),
+                        (typeof session.summary === 'string' && session.summary) || String(session.id),
+                        session.__provider,
+                      )
+                    }
+                    t={t}
+                  />
                 ))}
               </div>
             );
