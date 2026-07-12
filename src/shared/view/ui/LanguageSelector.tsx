@@ -26,7 +26,7 @@ export default function LanguageSelector({ compact = false }: LanguageSelectorPr
     i18n.changeLanguage(newLanguage);
   };
 
-  // Compact style for QuickSettingsPanel
+  // Compact style for embedding in narrow panels
   if (compact) {
     return (
       <div className="flex items-center justify-between rounded-lg border border-transparent bg-muted/50 p-3 transition-colors hover:border-border hover:bg-accent">
