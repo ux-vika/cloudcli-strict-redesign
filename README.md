@@ -1,3 +1,14 @@
+> ## 🎨 Strict Redesign
+> **This is a redesigned fork of [siteboon/claudecodeui](https://github.com/siteboon/claudecodeui) (v1.36.1).**
+> Complete visual overhaul in the «strict» direction while keeping all functionality intact:
+> - **Typography:** Instrument Sans (UI) + JetBrains Mono (code/technical), self-hosted
+> - **Palette:** navy/blue accent, clean flat surfaces — paired **Strict Light** & **Strict Dark** themes
+> - **Redesigned:** sidebar (vertical nav, project cards, chat list by activity), chat bubbles, composer (mic/send, permission-mode dropdown), tabs, settings, command palette and more
+> - **QA:** 78 test cases and a full test report included (`docs/qa/`)
+>
+> Design specs and handoff mockups live in `docs/redesign-handoff/` and `docs/superpowers/`.
+> License: AGPL-3.0, same as upstream. Все права на оригинал — у авторов [siteboon/claudecodeui](https://github.com/siteboon/claudecodeui).
+
 <div align="center">
  <img src="public/logo.svg" alt="CloudCLI UI" width="64" height="64">
  <h1>Cloud CLI (aka Claude Code UI)</h1>
