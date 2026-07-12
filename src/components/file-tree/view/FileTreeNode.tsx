@@ -48,7 +48,7 @@ function TreeItemIcon({ item, isOpen, renderFileIcon }: TreeItemIconProps) {
           )}
         />
         {isOpen ? (
-          <FolderOpen className="h-4 w-4 flex-shrink-0 text-blue-500" />
+          <FolderOpen className="h-4 w-4 flex-shrink-0 text-primary" />
         ) : (
           <Folder className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
         )}
@@ -100,7 +100,7 @@ export default function FileTreeNode({
       : viewMode === 'compact'
       ? 'group flex items-center justify-between py-[3px] pr-2 hover:bg-accent/60 cursor-pointer rounded-sm transition-colors duration-100'
       : 'group flex items-center gap-1.5 py-[3px] pr-2 cursor-pointer rounded-sm hover:bg-accent/60 transition-colors duration-100',
-    isDirectory && isOpen && 'border-l-2 border-primary/30',
+    isDirectory && isOpen && 'border-l-2 border-primary bg-primary-tint/40',
     (isDirectory && !isOpen) || !isDirectory ? 'border-l-2 border-transparent' : '',
   );
 

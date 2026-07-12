@@ -37,7 +37,7 @@ function KanbanColumns({
       )}
     >
       {columns.map((column) => (
-        <div key={column.id} className={cn('rounded-xl border shadow-sm transition-shadow hover:shadow-md', column.color)}>
+        <div key={column.id} className={cn('rounded-xl border', column.color)}>
           <div className={cn('px-4 py-3 rounded-t-xl border-b', column.headerColor)}>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">{column.title}</h3>

@@ -15,7 +15,7 @@ export const HANDLE_POSITION_MAX = 90;
 export const DRAG_THRESHOLD_PX = 5;
 
 export const SETTING_ROW_CLASS =
-  'flex items-center justify-between p-3 rounded-lg bg-muted/60 hover:bg-accent transition-colors border border-transparent hover:border-border';
+  'flex items-center justify-between px-3 py-[11px] rounded-[9px] bg-sidebar border border-border transition-colors hover:bg-secondary';
 
 export const TOGGLE_ROW_CLASS = `${SETTING_ROW_CLASS} cursor-pointer`;
 
