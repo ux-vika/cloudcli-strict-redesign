@@ -94,22 +94,17 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, s
                 projectId={selectedProject?.projectId}
               />
             )}
-            {userCopyContent.trim().length > 0 || !message.images?.length ? (
+            {(userCopyContent.trim().length > 0 || !message.images?.length) && (
               <div className="group max-w-full rounded-[14px] rounded-br-[4px] bg-user-bubble px-4 py-[11px] text-user-bubble-foreground sm:px-4">
                 <div dir="auto" className="whitespace-pre-wrap break-words text-[14.5px] leading-[1.5]">
                   {message.content}
                 </div>
-                <div className="mt-1 flex items-center justify-end gap-1 text-xs text-user-bubble-foreground/60">
-                  {shouldShowUserCopyControl && (
-                    <MessageCopyControl content={userCopyContent} messageType="user" />
-                  )}
-                  <span>{formattedTime}</span>
-                </div>
               </div>
-            ) : (
-              /* Image-only turn: no text bubble, but the timestamp still shows */
-              <div className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
-                <span>{formattedTime}</span>
+            )}
+            {/* Экшены под бабблом — как у ответа ассистента */}
+            {shouldShowUserCopyControl && (
+              <div className="flex items-center justify-end gap-0.5 text-xs text-muted-foreground">
+                <MessageCopyControl content={userCopyContent} messageType="user" />
               </div>
             )}
           </div>
@@ -379,15 +374,10 @@ const MessageComponent = memo(({ message, prevMessage, createDiff, onFileOpen, s
               </div>
             )}
 
-            {(shouldShowAssistantCopyControl || !isGrouped) && (
+            {shouldShowAssistantCopyControl && (
               <div className="mt-1 flex w-full items-center gap-2 text-[11px] text-muted-foreground">
-                {shouldShowAssistantCopyControl && (
-                  <MessageCopyControl content={assistantCopyContent} messageType="assistant" />
-                )}
-                {shouldShowAssistantCopyControl && (
-                  <MessageSpeakControl content={assistantCopyContent} />
-                )}
-                {!isGrouped && <span>{formattedTime}</span>}
+                <MessageCopyControl content={assistantCopyContent} messageType="assistant" />
+                <MessageSpeakControl content={assistantCopyContent} />
               </div>
             )}
           </div>

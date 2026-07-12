@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Check, Edit2, Loader2, Trash2, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Check, Edit2, Loader2, MoreHorizontal, Trash2, X } from 'lucide-react';
 import type { TFunction } from 'i18next';
 
 import { Badge, Tooltip, buttonVariants } from '../../../../shared/view/ui';
@@ -84,6 +84,19 @@ export default function SidebarSessionItem({
   const isEditing = editingSession === session.id;
   const compactSessionAge = formatCompactSessionAge(sessionView.sessionTime, currentTime);
   const editingContainerRef = useRef<HTMLDivElement>(null);
+  // Меню «⋯» строки сессии (Rename/Delete) — действия спрятаны по правкам дизайна
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handle = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [isMenuOpen]);
   const showAttentionIndicator = needsAttention && !isSelected;
   const showRecentIndicator = !showAttentionIndicator && !isProcessing && sessionView.isActive;
 
@@ -122,7 +135,7 @@ export default function SidebarSessionItem({
   };
 
   return (
-    <div className="group relative">
+    <div className={cn('group relative', isMenuOpen && 'z-50')}>
       {(showAttentionIndicator || showRecentIndicator) && (
         <div className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 transform">
           <Tooltip
@@ -305,30 +318,49 @@ export default function SidebarSessionItem({
                 </button>
               </>
             ) : (
-              <>
+              <div ref={menuRef} className="relative">
                 <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-gray-50 hover:bg-gray-100 dark:bg-gray-900/20 dark:hover:bg-gray-900/40"
+                  className="flex h-6 w-6 items-center justify-center rounded hover:bg-secondary"
                   onClick={(event) => {
                     event.stopPropagation();
-                    onStartEditingSession(session.id, sessionView.sessionName);
+                    event.preventDefault();
+                    setIsMenuOpen((open) => !open);
                   }}
-                  title={t('tooltips.editSessionName')}
+                  title={t('tooltips.moreActions', 'More actions')}
                 >
-                  <Edit2 className="h-3 w-3 text-gray-600 dark:text-gray-400" />
+                  <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
-                {!isProcessing && (
-                  <button
-                    className="flex h-6 w-6 items-center justify-center rounded bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      requestDeleteSession();
-                    }}
-                    title={t('tooltips.deleteSessionOptions', 'Archive or permanently delete this session')}
-                  >
-                    <Trash2 className="h-3 w-3 text-red-600 dark:text-red-400" />
-                  </button>
+                {isMenuOpen && (
+                  <div className="absolute right-0 top-full z-50 mt-1 w-36 overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg">
+                    <button
+                      className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12.5px] text-foreground hover:bg-secondary"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        setIsMenuOpen(false);
+                        onStartEditingSession(session.id, sessionView.sessionName);
+                      }}
+                    >
+                      <Edit2 className="h-3 w-3" />
+                      <span className="truncate">{t('nav.rename', 'Rename')}</span>
+                    </button>
+                    {!isProcessing && (
+                      <button
+                        className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12.5px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          event.preventDefault();
+                          setIsMenuOpen(false);
+                          requestDeleteSession();
+                        }}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        <span className="truncate">{t('nav.delete', 'Delete')}</span>
+                      </button>
+                    )}
+                  </div>
                 )}
-              </>
+              </div>
             )}
           </div>
       </div>

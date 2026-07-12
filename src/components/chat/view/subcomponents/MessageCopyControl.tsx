@@ -46,8 +46,8 @@ const MessageCopyControl = ({
   messageType: 'user' | 'assistant';
 }) => {
   const { t } = useTranslation('chat');
-  const canSelectCopyFormat = messageType === 'assistant';
-  const defaultFormat: CopyFormat = canSelectCopyFormat ? 'markdown' : 'text';
+  const canSelectCopyFormat = true;
+  const defaultFormat: CopyFormat = messageType === 'assistant' ? 'markdown' : 'text';
   const [selectedFormat, setSelectedFormat] = useState<CopyFormat>(defaultFormat);
   const [copied, setCopied] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -160,9 +160,7 @@ const MessageCopyControl = ({
     setIsDropdownOpen(false);
   };
 
-  const toneClass = messageType === 'user'
-    ? 'text-blue-100 hover:text-white'
-    : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300';
+  const toneClass = 'text-muted-foreground hover:text-foreground';
   const copyTitle = copied ? t('copyMessage.copied') : t('copyMessage.copy');
   const rootClassName = canSelectCopyFormat
     ? 'relative flex min-w-0 flex-1 items-center gap-0.5 sm:min-w-max sm:flex-none sm:w-auto'

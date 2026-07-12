@@ -64,6 +64,8 @@ interface ChatComposerProps {
   onAbortSession: () => void;
   permissionMode: PermissionMode | string;
   onModeSwitch: () => void;
+  availablePermissionModes?: PermissionMode[];
+  onSelectPermissionMode?: (mode: PermissionMode) => void;
   effort: string;
   availableEffortOptions: NonNullable<ProviderModelOption['effort']>['values'];
   onSelectEffort: (effort: string) => void;
@@ -122,6 +124,8 @@ export default function ChatComposer({
   onAbortSession,
   permissionMode,
   onModeSwitch,
+  availablePermissionModes,
+  onSelectPermissionMode,
   effort,
   availableEffortOptions,
   onSelectEffort,
@@ -204,6 +208,32 @@ export default function ChatComposer({
   const isRecording = voiceState === 'recording';
   const isTranscribing = voiceState === 'transcribing';
   const [isEffortDropdownOpen, setIsEffortDropdownOpen] = useState(false);
+  // Дропдаун выбора режима прав (щит): портал, чтобы не резался overflow-hidden композера
+  const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
+  const [modeMenuPosition, setModeMenuPosition] = useState<{ left: number; top: number } | null>(null);
+  const modeMenuRef = useRef<HTMLDivElement | null>(null);
+  const modeMenuPanelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!isModeMenuOpen) return;
+    const handle = (event: globalThis.MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        modeMenuRef.current && !modeMenuRef.current.contains(target) &&
+        modeMenuPanelRef.current && !modeMenuPanelRef.current.contains(target)
+      ) {
+        setIsModeMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [isModeMenuOpen]);
+  const MODE_DOT_CLASS: Record<string, string> = {
+    default: 'bg-muted-foreground',
+    auto: 'bg-blue-500',
+    acceptEdits: 'bg-green-500',
+    bypassPermissions: 'bg-orange-500',
+    plan: 'bg-primary',
+  };
   const effortDropdownRef = useRef<HTMLDivElement | null>(null);
   const effortDropdownMenuRef = useRef<HTMLDivElement | null>(null);
   const effortDropdownButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -294,7 +324,7 @@ export default function ChatComposer({
   return (
     <div className="chat-composer-shell relative flex-shrink-0 px-2 pb-2 pt-0 sm:px-4 sm:pb-4 md:px-4 md:pb-6">
       {!hasPendingPermissions && (
-        <div className="pointer-events-none absolute bottom-full left-1/2 z-10 w-[calc(100%-1rem)] max-w-[45rem] -translate-x-1/2 translate-y-px bg-transparent sm:w-[calc(100%-2rem)]">
+        <div className="mx-auto mb-1 max-w-[45rem] px-1">
           <ActivityIndicator activity={activity} onAbort={onAbortSession} isInputFocused={isInputFocused} />
         </div>
       )}
@@ -429,31 +459,72 @@ export default function ChatComposer({
             <PromptInputButton
               tooltip={{ content: t('input.attachImages') }}
               onClick={openImagePicker}
+              className="text-muted-foreground hover:text-foreground"
             >
               <Paperclip />
             </PromptInputButton>
 
-            <button
-              type="button"
-              onClick={onModeSwitch}
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-md transition-all duration-200 hover:bg-secondary ${
-                permissionMode === 'acceptEdits'
-                  ? 'text-green-600 dark:text-green-400'
-                  : permissionMode === 'auto'
-                    ? 'text-blue-500'
-                    : permissionMode === 'bypassPermissions'
-                      ? 'text-orange-500'
-                      : 'text-primary'
-              }`}
-              title={`${t('input.clickToChangeMode')}: ${
-                permissionMode === 'default' ? t('codex.modes.default')
-                : permissionMode === 'acceptEdits' ? t('codex.modes.acceptEdits')
-                : permissionMode === 'auto' ? t('codex.modes.auto')
-                : permissionMode === 'bypassPermissions' ? t('codex.modes.bypassPermissions')
-                : t('codex.modes.plan')}`}
-            >
-              <ShieldIcon className="h-[15px] w-[15px]" />
-            </button>
+            <div ref={modeMenuRef} className="relative">
+              <button
+                type="button"
+                onClick={(e) => {
+                  if (availablePermissionModes && availablePermissionModes.length > 0 && onSelectPermissionMode) {
+                    const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+                    setModeMenuPosition({ left: rect.left, top: rect.top - 6 });
+                    setIsModeMenuOpen((open) => !open);
+                  } else {
+                    onModeSwitch();
+                  }
+                }}
+                className={`inline-flex h-8 w-8 items-center justify-center rounded-md transition-all duration-200 hover:bg-secondary ${
+                  permissionMode === 'acceptEdits'
+                    ? 'text-green-600 dark:text-green-400'
+                    : permissionMode === 'auto'
+                      ? 'text-blue-500'
+                      : permissionMode === 'bypassPermissions'
+                        ? 'text-orange-500'
+                        : 'text-primary'
+                }`}
+                title={`${t('input.clickToChangeMode')}: ${
+                  permissionMode === 'default' ? t('codex.modes.default')
+                  : permissionMode === 'acceptEdits' ? t('codex.modes.acceptEdits')
+                  : permissionMode === 'auto' ? t('codex.modes.auto')
+                  : permissionMode === 'bypassPermissions' ? t('codex.modes.bypassPermissions')
+                  : t('codex.modes.plan')}`}
+              >
+                <ShieldIcon className="h-[15px] w-[15px]" />
+              </button>
+              {isModeMenuOpen && modeMenuPosition && availablePermissionModes && onSelectPermissionMode && createPortal(
+                <div
+                  ref={modeMenuPanelRef}
+                  className="fixed z-[100] w-48 overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg"
+                  style={{ left: modeMenuPosition.left, top: modeMenuPosition.top, transform: 'translateY(-100%)' }}
+                  role="menu"
+                >
+                  {availablePermissionModes.map((mode) => {
+                    const isActive = mode === permissionMode;
+                    return (
+                      <button
+                        key={mode}
+                        type="button"
+                        className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12.5px] transition-colors ${
+                          isActive ? 'bg-primary-tint font-semibold text-primary' : 'text-foreground hover:bg-secondary'
+                        }`}
+                        onClick={() => {
+                          onSelectPermissionMode(mode);
+                          setIsModeMenuOpen(false);
+                        }}
+                      >
+                        <span className={`h-2 w-2 flex-shrink-0 rounded-full ${MODE_DOT_CLASS[mode] ?? 'bg-muted-foreground'}`} />
+                        <span className="min-w-0 flex-1 truncate">{t(`codex.modes.${mode}`)}</span>
+                        {isActive && <Check className="h-3 w-3 flex-shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>,
+                document.body,
+              )}
+            </div>
 
             {availableEffortOptions.length > 0 && (
               <div ref={effortDropdownRef} className="relative">
@@ -476,7 +547,7 @@ export default function ChatComposer({
                 {isEffortDropdownOpen && effortDropdownPosition && createPortal(
                   <div
                     ref={effortDropdownMenuRef}
-                    className="fixed z-[100] min-w-36 overflow-y-auto rounded-lg border border-border bg-card p-1 shadow-lg"
+                    className="fixed z-[100] w-48 overflow-y-auto rounded-md border border-border bg-card p-1 shadow-lg"
                     style={{
                       left: effortDropdownPosition.left,
                       top: effortDropdownPosition.top,
@@ -498,10 +569,10 @@ export default function ChatComposer({
                             onSelectEffort(option.value);
                             setIsEffortDropdownOpen(false);
                           }}
-                          className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs capitalize transition-colors ${
+                          className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12.5px] capitalize transition-colors ${
                             isSelected
-                              ? 'bg-accent text-foreground'
-                              : 'text-muted-foreground hover:bg-accent/70 hover:text-foreground'
+                              ? 'bg-primary-tint font-semibold text-primary'
+                              : 'text-foreground hover:bg-secondary'
                           }`}
                         >
                           <span className="flex h-3 w-3 items-center justify-center">
@@ -522,42 +593,18 @@ export default function ChatComposer({
             <PromptInputButton
               tooltip={{ content: t('input.showAllCommands') }}
               onClick={onToggleCommandMenu}
-              className="relative"
+              className="relative text-muted-foreground hover:text-foreground"
             >
               <MessageSquareIcon />
-              {slashCommandsCount > 0 && (
-                <span
-                  className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground"
-                >
-                  {slashCommandsCount}
-                </span>
-              )}
             </PromptInputButton>
-
-            {hasInput && (
-              <PromptInputButton
-                tooltip={{ content: t('input.clearInput', { defaultValue: 'Clear input' }) }}
-                onClick={onClearInput}
-                className="hidden sm:flex"
-              >
-                <XIcon />
-              </PromptInputButton>
-            )}
 
           </PromptInputTools>
 
           <div className="flex items-center gap-2">
-            <div
-              className={`hidden text-xs text-muted-foreground/50 transition-opacity duration-200 lg:block ${
-                input.trim() && !canQueueDraft ? 'opacity-0' : 'opacity-100'
-              }`}
-            >
-              {submitHint}
-            </div>
             {/* Пустое поле + доступен голос → большой mic (по макету); иначе — send */}
             {(() => {
               const showMic = Boolean(
-                onVoiceTranscript && voiceAvailable && !input.trim() && !isLoading && !isTranscribing && !canQueueDraft,
+                onVoiceTranscript && !input.trim() && !isLoading && !isTranscribing && !canQueueDraft,
               );
               if (showMic) {
                 return (
@@ -573,7 +620,7 @@ export default function ChatComposer({
                         e.preventDefault();
                         voiceToggle();
                       }}
-                      className={`flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${
+                      className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${
                         isRecording
                           ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
                           : 'bg-primary-tint text-primary hover:bg-primary-tint/70'
@@ -581,7 +628,7 @@ export default function ChatComposer({
                       aria-label={isRecording ? 'Stop recording' : 'Voice input'}
                       title={isRecording ? 'Stop recording' : 'Voice input'}
                     >
-                      {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-5 w-5" />}
+                      {isRecording ? <Square className="h-3.5 w-3.5" /> : <Mic className="h-4 w-4" />}
                     </button>
                   </span>
                 );
@@ -606,7 +653,7 @@ export default function ChatComposer({
                   disabled={isLoading ? false : isRecording ? false : isTranscribing ? true : !input.trim()}
                   aria-label={submitAriaLabel}
                   title={submitAriaLabel}
-                  className="h-10 w-10 sm:h-10 sm:w-10"
+                  className="h-7 w-7 rounded-lg sm:h-7 sm:w-7"
                 >
                   {isTranscribing ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -619,6 +666,7 @@ export default function ChatComposer({
           </div>
         </PromptInputFooter>
       </PromptInput>
+      <div className="mt-2 text-center text-[11px] text-muted-foreground">{submitHint}</div>
       </div>}
     </div>
   );

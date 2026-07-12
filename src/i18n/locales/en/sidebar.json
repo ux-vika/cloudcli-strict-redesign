@@ -147,6 +147,8 @@
     "projects": "Projects",
     "chats": "Chats",
     "running": "Running",
-    "archive": "Archive"
+    "archive": "Archive",
+    "rename": "Rename",
+    "delete": "Delete"
   }
 }

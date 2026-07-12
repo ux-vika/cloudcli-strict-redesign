@@ -135,7 +135,7 @@ export default function SidebarProjectItem({
   };
 
   return (
-    <div className={cn('md:space-y-1', isExpanded && 'md:space-y-0 md:rounded-md md:border md:border-secondary md:border-l-2 md:border-l-primary md:bg-card', isDeleting && 'opacity-50 pointer-events-none')}>
+    <div className={cn('md:space-y-1', isMenuOpen && 'relative z-50', isExpanded && 'md:space-y-0 md:rounded-md md:border md:border-secondary md:border-l-2 md:border-l-primary md:bg-card', isDeleting && 'opacity-50 pointer-events-none')}>
       <div className="md:group group">
         <div className="md:hidden">
           <div
@@ -375,7 +375,7 @@ export default function SidebarProjectItem({
                     <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                   {isMenuOpen && (
-                    <div className="absolute right-0 top-full z-50 mt-1 w-40 rounded-md border border-border bg-card p-1 shadow-lg">
+                    <div className="absolute right-0 top-full z-50 mt-1 w-36 overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg">
                       <div
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-[12.5px] text-foreground hover:bg-secondary"
                         onClick={(event) => {
@@ -385,7 +385,7 @@ export default function SidebarProjectItem({
                         }}
                       >
                         <Edit3 className="h-3 w-3" />
-                        {t('tooltips.renameProject')}
+                        <span className="truncate">{t('nav.rename', 'Rename')}</span>
                       </div>
                       <div
                         className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-[12.5px] text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
@@ -396,7 +396,7 @@ export default function SidebarProjectItem({
                         }}
                       >
                         <Trash2 className="h-3 w-3" />
-                        {t('tooltips.deleteProject')}
+                        <span className="truncate">{t('nav.delete', 'Delete')}</span>
                       </div>
                     </div>
                   )}
@@ -415,6 +415,7 @@ export default function SidebarProjectItem({
       <SidebarProjectSessions
         project={project}
         isExpanded={isExpanded}
+        isNewSessionActive={isSelected && !selectedSession}
         sessions={sessions}
         selectedSession={selectedSession}
         initialSessionsLoaded={initialSessionsLoaded}

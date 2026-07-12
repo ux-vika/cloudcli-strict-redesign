@@ -8,7 +8,7 @@ import type { ReleaseInfo } from '../../../../types/sharedTypes';
 import type { ConversationSearchResults, SearchProgress } from '../../hooks/useSidebarController';
 import type { ArchivedProjectListItem, ArchivedSessionListItem, SidebarSearchMode } from '../../types/types';
 import SessionProviderLogo from '../../../llm-logo-provider/SessionProviderLogo';
-import { getAllSessions } from '../../utils/utils';
+import { getAllSessions, getSessionDate } from '../../utils/utils';
 
 import SidebarFooter from './SidebarFooter';
 import SidebarHeader from './SidebarHeader';
@@ -323,6 +323,51 @@ export default function SidebarContent({
               ))}
             </div>
           ) : null
+) : searchMode === 'conversations' ? (
+          /* Chats без поискового запроса: все чаты всех проектов по последней активности */
+          (() => {
+            const allChats = projects
+              .flatMap((project) => getAllSessions(project).map((session) => ({ project, session })))
+              .sort((a, b) => getSessionDate(b.session).getTime() - getSessionDate(a.session).getTime());
+
+            if (allChats.length === 0) {
+              return (
+                <div className="px-4 py-12 text-center md:py-8">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-muted md:mb-3">
+                    <MessageSquare className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">{t('sessions.noSessions')}</p>
+                </div>
+              );
+            }
+
+            return (
+              <div className="px-1.5 [&>button+button]:border-t [&>button+button]:border-border/60">
+                {allChats.map(({ project, session }) => (
+                  <button
+                    key={`${project.projectId}-${session.id}`}
+                    className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left transition-colors hover:bg-secondary"
+                    onClick={() => onConversationResultClick(project.projectId, String(session.id), session.__provider)}
+                  >
+                    <SessionProviderLogo provider={session.__provider} className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] font-normal text-foreground">
+                        {(typeof session.summary === 'string' && session.summary.trim().length > 0
+                          ? session.summary
+                          : typeof session.name === 'string' && session.name.trim().length > 0
+                            ? session.name
+                            : String(session.id))}
+                      </span>
+                      <span className="block truncate text-[11px] text-muted-foreground">{project.displayName}</span>
+                    </span>
+                    <span className="ml-auto flex-shrink-0 font-mono text-[10.5px] text-muted-foreground">
+                      {formatCompactArchivedAge(getSessionDate(session).toISOString())}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            );
+          })()
         ) : searchMode === 'running' ? (
           projectListProps.filteredProjects.length === 0 ? (
             <div className="px-4 py-12 text-center md:py-8">

@@ -111,7 +111,7 @@ export const PromptInputFooter = React.forwardRef<
   <div
     ref={ref}
     data-slot="prompt-input-footer"
-    className={cn('flex items-center justify-between border-t border-border px-3 py-2', className)}
+    className={cn('flex items-center justify-between px-3 pb-2 pt-1', className)}
     {...props}
   />
 ));

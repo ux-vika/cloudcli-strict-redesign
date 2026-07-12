@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { MessageSquare, Plus } from 'lucide-react';
 import type { TFunction } from 'i18next';
 
 import { Button } from '../../../../shared/view/ui';
@@ -11,6 +11,7 @@ import SidebarSessionItem from './SidebarSessionItem';
 type SidebarProjectSessionsProps = {
   project: Project;
   isExpanded: boolean;
+  isNewSessionActive?: boolean;
   sessions: SessionWithProvider[];
   selectedSession: ProjectSession | null;
   initialSessionsLoaded: boolean;
@@ -59,6 +60,7 @@ function SessionListSkeleton() {
 export default function SidebarProjectSessions({
   project,
   isExpanded,
+  isNewSessionActive,
   sessions,
   selectedSession,
   initialSessionsLoaded,
@@ -110,6 +112,18 @@ export default function SidebarProjectSessions({
         <Plus className="h-3 w-3" />
         {t('sessions.newSession')}
       </Button>
+
+      {/* Черновик новой сессии: живёт, пока не отправлено первое сообщение */}
+      {isNewSessionActive && (
+        <div className="hidden w-full items-center gap-2 rounded-md bg-nav-selected px-2.5 py-2 md:flex">
+          <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center">
+            <MessageSquare className="h-3.5 w-3.5 text-primary" />
+          </span>
+          <span className="min-w-0 flex-1 truncate text-[13px] font-normal text-foreground">
+            {t('sessions.newSession')}
+          </span>
+        </div>
+      )}
 
       {!initialSessionsLoaded ? (
         <SessionListSkeleton />

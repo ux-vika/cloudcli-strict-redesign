@@ -502,6 +502,17 @@ export function useChatProviderState({ selectedSession, selectedProject: _select
     }
   }, [permissionMode, provider, selectedSession?.id, getPermissionModesForProvider]);
 
+  // Прямой выбор режима из дропдауна (щит в композере) с тем же персистом, что и cycle
+  const selectPermissionMode = useCallback((mode: PermissionMode) => {
+    const modes = getPermissionModesForProvider(provider);
+    if (!modes.includes(mode)) return;
+    setPermissionMode(mode);
+    localStorage.setItem(`permissionMode-last-${provider}`, mode);
+    if (selectedSession?.id) {
+      localStorage.setItem(`permissionMode-${selectedSession.id}`, mode);
+    }
+  }, [provider, selectedSession?.id, getPermissionModesForProvider]);
+
   const resolvePermissionModeForProvider = useCallback((
     targetProvider: LLMProvider,
     requestedMode: PermissionMode | string,
@@ -576,6 +587,8 @@ export function useChatProviderState({ selectedSession, selectedProject: _select
     pendingPermissionRequests,
     setPendingPermissionRequests,
     cyclePermissionMode,
+    selectPermissionMode,
+    getPermissionModesForProvider,
     providerModelCatalog,
     providerModelCacheCatalog,
     providerModelsLoading,
