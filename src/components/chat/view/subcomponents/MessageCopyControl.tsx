@@ -219,7 +219,7 @@ const MessageCopyControl = ({
         <div
           ref={menuRef}
           style={menuStyle}
-          className="min-w-36 rounded-md border border-border bg-popover p-1 shadow-lg"
+          className="min-w-36 origin-top-right animate-popover-in rounded-md border border-border bg-popover p-1 shadow-lg"
         >
           {copyFormatOptions.map((option) => {
             const isSelected = option.format === selectedFormat;

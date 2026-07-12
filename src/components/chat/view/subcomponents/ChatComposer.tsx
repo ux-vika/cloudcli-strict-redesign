@@ -477,7 +477,7 @@ export default function ChatComposer({
                     onModeSwitch();
                   }
                 }}
-                className={`inline-flex h-8 w-8 items-center justify-center rounded-md transition-all duration-200 hover:bg-secondary ${
+                className={`inline-flex h-8 w-8 items-center justify-center rounded-md transition-all duration-200 hover:bg-secondary active:scale-[0.94] ${
                   permissionMode === 'acceptEdits'
                     ? 'text-green-600 dark:text-green-400'
                     : permissionMode === 'auto'
@@ -498,7 +498,7 @@ export default function ChatComposer({
               {isModeMenuOpen && modeMenuPosition && availablePermissionModes && onSelectPermissionMode && createPortal(
                 <div
                   ref={modeMenuPanelRef}
-                  className="fixed z-[100] w-48 overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg"
+                  className="fixed z-[100] w-48 animate-fade-in overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg"
                   style={{ left: modeMenuPosition.left, top: modeMenuPosition.top, transform: 'translateY(-100%)' }}
                   role="menu"
                 >
@@ -536,7 +536,7 @@ export default function ChatComposer({
                     updateEffortDropdownPosition();
                     setIsEffortDropdownOpen((current) => !current);
                   }}
-                  className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground"
+                  className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground active:scale-[0.94]"
                   aria-haspopup="menu"
                   aria-expanded={isEffortDropdownOpen}
                   aria-label="Select reasoning effort"
@@ -548,7 +548,7 @@ export default function ChatComposer({
                 {isEffortDropdownOpen && effortDropdownPosition && createPortal(
                   <div
                     ref={effortDropdownMenuRef}
-                    className="fixed z-[100] w-48 overflow-y-auto rounded-md border border-border bg-card p-1 shadow-lg"
+                    className="fixed z-[100] w-48 animate-fade-in overflow-y-auto rounded-md border border-border bg-card p-1 shadow-lg"
                     style={{
                       left: effortDropdownPosition.left,
                       top: effortDropdownPosition.top,
@@ -621,7 +621,7 @@ export default function ChatComposer({
                         e.preventDefault();
                         voiceToggle();
                       }}
-                      className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${
+                      className={`flex h-7 w-7 items-center justify-center rounded-lg transition-all active:scale-[0.94] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${
                         isRecording
                           ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
                           : 'bg-primary-tint text-primary hover:bg-primary-tint/70'

@@ -142,7 +142,7 @@ function ChatListItem({
               <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
             {isMenuOpen && (
-              <div className="absolute right-0 top-full z-50 mt-1 w-36 overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg">
+              <div className="absolute right-0 top-full z-50 mt-1 w-36 origin-top-right animate-popover-in overflow-hidden rounded-md border border-border bg-card p-1 shadow-lg">
                 <button
                   className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12.5px] text-foreground hover:bg-secondary"
                   onClick={() => {
