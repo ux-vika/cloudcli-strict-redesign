@@ -11,7 +11,7 @@ import type {
   RefObject,
   TouchEvent,
 } from 'react';
-import { Paperclip, ShieldIcon, SlidersHorizontal, MessageSquareIcon, XIcon, Loader2, ChevronDown, Check, ArrowUpIcon, Mic, Square } from 'lucide-react';
+import { Paperclip, ShieldIcon, SlidersHorizontal, MessageSquareIcon, Loader2, Check, ArrowUpIcon, Mic, Square } from 'lucide-react';
 
 import { useVoiceInput } from '../../hooks/useVoiceInput';
 import { useVoiceAvailable } from '../../hooks/useVoiceAvailable';
@@ -114,6 +114,14 @@ interface ChatComposerProps {
   isTextareaExpanded: boolean;
   sendByCtrlEnter?: boolean;
 }
+
+const MODE_DOT_CLASS: Record<string, string> = {
+  default: 'bg-muted-foreground',
+  auto: 'bg-blue-500',
+  acceptEdits: 'bg-green-500',
+  bypassPermissions: 'bg-orange-500',
+  plan: 'bg-primary',
+};
 
 export default function ChatComposer({
   pendingPermissionRequests,
@@ -227,13 +235,6 @@ export default function ChatComposer({
     document.addEventListener('mousedown', handle);
     return () => document.removeEventListener('mousedown', handle);
   }, [isModeMenuOpen]);
-  const MODE_DOT_CLASS: Record<string, string> = {
-    default: 'bg-muted-foreground',
-    auto: 'bg-blue-500',
-    acceptEdits: 'bg-green-500',
-    bypassPermissions: 'bg-orange-500',
-    plan: 'bg-primary',
-  };
   const effortDropdownRef = useRef<HTMLDivElement | null>(null);
   const effortDropdownMenuRef = useRef<HTMLDivElement | null>(null);
   const effortDropdownButtonRef = useRef<HTMLButtonElement | null>(null);

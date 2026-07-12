@@ -46,7 +46,6 @@ const MessageCopyControl = ({
   messageType: 'user' | 'assistant';
 }) => {
   const { t } = useTranslation('chat');
-  const canSelectCopyFormat = true;
   const defaultFormat: CopyFormat = messageType === 'assistant' ? 'markdown' : 'text';
   const [selectedFormat, setSelectedFormat] = useState<CopyFormat>(defaultFormat);
   const [copied, setCopied] = useState(false);
@@ -162,9 +161,7 @@ const MessageCopyControl = ({
 
   const toneClass = 'text-muted-foreground hover:text-foreground';
   const copyTitle = copied ? t('copyMessage.copied') : t('copyMessage.copy');
-  const rootClassName = canSelectCopyFormat
-    ? 'relative flex min-w-0 flex-1 items-center gap-0.5 sm:min-w-max sm:flex-none sm:w-auto'
-    : 'relative flex items-center gap-0.5';
+  const rootClassName = 'relative flex min-w-0 flex-1 items-center gap-0.5 sm:min-w-max sm:flex-none sm:w-auto';
 
   return (
     <div ref={dropdownRef} className={rootClassName}>
@@ -200,52 +197,48 @@ const MessageCopyControl = ({
         <span className="text-[10px] font-semibold uppercase tracking-wide">{selectedFormatTag}</span>
       </button>
 
-      {canSelectCopyFormat && (
-        <>
-          <button
-            ref={triggerRef}
-            type="button"
-            onClick={() => (isDropdownOpen ? setIsDropdownOpen(false) : openDropdown())}
-            className={`rounded px-1 py-0.5 transition-colors ${toneClass}`}
-            aria-label={t('copyMessage.selectFormat', { defaultValue: 'Select copy format' })}
-            title={t('copyMessage.selectFormat', { defaultValue: 'Select copy format' })}
-          >
-            <svg
-              className={`h-3 w-3 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => (isDropdownOpen ? setIsDropdownOpen(false) : openDropdown())}
+        className={`rounded px-1 py-0.5 transition-colors ${toneClass}`}
+        aria-label={t('copyMessage.selectFormat', { defaultValue: 'Select copy format' })}
+        title={t('copyMessage.selectFormat', { defaultValue: 'Select copy format' })}
+      >
+        <svg
+          className={`h-3 w-3 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
 
-          {isDropdownOpen && createPortal(
-            <div
-              ref={menuRef}
-              style={menuStyle}
-              className="min-w-36 rounded-md border border-border bg-popover p-1 shadow-lg"
-            >
-              {copyFormatOptions.map((option) => {
-                const isSelected = option.format === selectedFormat;
-                return (
-                  <button
-                    key={option.format}
-                    type="button"
-                    onClick={() => handleFormatChange(option.format)}
-                    className={`block w-full rounded px-2 py-1.5 text-left transition-colors ${isSelected
-                      ? 'bg-accent text-foreground'
-                      : 'text-foreground hover:bg-accent'
-                      }`}
-                  >
-                    <span className="block text-xs font-medium">{option.label}</span>
-                  </button>
-                );
-              })}
-            </div>,
-            document.body,
-          )}
-        </>
+      {isDropdownOpen && createPortal(
+        <div
+          ref={menuRef}
+          style={menuStyle}
+          className="min-w-36 rounded-md border border-border bg-popover p-1 shadow-lg"
+        >
+          {copyFormatOptions.map((option) => {
+            const isSelected = option.format === selectedFormat;
+            return (
+              <button
+                key={option.format}
+                type="button"
+                onClick={() => handleFormatChange(option.format)}
+                className={`block w-full rounded px-2 py-1.5 text-left transition-colors ${isSelected
+                  ? 'bg-accent text-foreground'
+                  : 'text-foreground hover:bg-accent'
+                  }`}
+              >
+                <span className="block text-xs font-medium">{option.label}</span>
+              </button>
+            );
+          })}
+        </div>,
+        document.body,
       )}
     </div>
   );

@@ -461,8 +461,8 @@ export default function SidebarContent({
           /* Chats без поискового запроса: все чаты всех проектов по последней активности */
           (() => {
             const allChats = projects
-              .flatMap((project) => getAllSessions(project).map((session) => ({ project, session })))
-              .sort((a, b) => getSessionDate(b.session).getTime() - getSessionDate(a.session).getTime());
+              .flatMap((project) => getAllSessions(project).map((session) => ({ project, session, date: getSessionDate(session) })))
+              .sort((a, b) => b.date.getTime() - a.date.getTime());
 
             if (allChats.length === 0) {
               return (
@@ -477,12 +477,12 @@ export default function SidebarContent({
 
             return (
               <div className="px-1.5 [&>div+div]:border-t [&>div+div]:border-border/60">
-                {allChats.map(({ project, session }) => (
+                {allChats.map(({ project, session, date }) => (
                   <ChatListItem
                     key={`${project.projectId}-${session.id}`}
                     project={project}
                     session={session}
-                    age={formatCompactArchivedAge(getSessionDate(session).toISOString())}
+                    age={formatCompactArchivedAge(date.toISOString())}
                     isEditing={projectListProps.editingSession === String(session.id)}
                     editingSessionName={projectListProps.editingSessionName}
                     onOpen={() => onConversationResultClick(project.projectId, String(session.id), session.__provider)}
