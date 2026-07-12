@@ -43,7 +43,7 @@ export default function SidebarNav({
     <nav className="hidden space-y-0.5 px-3 pb-2.5 pt-0.5 md:block">
       <button
         onClick={onCreateProject}
-        className="flex w-full items-center gap-2.5 rounded-md border border-np-border bg-np px-2.5 py-2 text-[13px] font-medium text-np-foreground transition-colors hover:bg-np-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring"
+        className="flex w-full items-center gap-2.5 rounded-md border border-primary-tint-border bg-card px-3 py-[9px] text-[13px] font-semibold text-primary transition-colors hover:bg-primary-tint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring"
       >
         <FolderPlus className="h-[15px] w-[15px]" />
         {t('nav.newProject', 'New project')}

@@ -87,7 +87,7 @@ export default function SidebarProjectSessions({
   const hasSessions = sessions.length > 0;
 
   return (
-    <div className="ml-3 space-y-1 border-l-2 border-primary pl-3">
+    <div className="ml-3 space-y-1 border-l-2 border-primary pl-3 md:ml-0 md:border-l-0 md:py-1 md:pl-3.5 md:pr-2">
       <div className="px-3 pb-1 pt-1 md:hidden">
         <button
           className="flex h-8 w-full items-center justify-center gap-2 rounded-md bg-primary text-xs font-medium text-primary-foreground transition-all duration-150 hover:bg-primary/90 active:scale-[0.98]"

@@ -31,8 +31,8 @@ export function Pill({ isActive, onClick, children, className }: PillProps) {
       className={cn(
         'flex touch-manipulation items-center gap-1.5 rounded-md px-[13px] py-1.5 text-[12.5px] font-semibold transition-all duration-150',
         isActive
-          ? 'bg-card text-primary shadow-sm'
-          : 'text-muted-foreground hover:text-foreground active:bg-card/50',
+          ? 'border border-border bg-card text-primary'
+          : 'border border-transparent text-muted-foreground hover:text-foreground active:bg-card/50',
         className,
       )}
     >

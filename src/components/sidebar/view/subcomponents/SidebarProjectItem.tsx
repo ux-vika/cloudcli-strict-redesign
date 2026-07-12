@@ -121,7 +121,7 @@ export default function SidebarProjectItem({
   };
 
   return (
-    <div className={cn('md:space-y-1', isDeleting && 'opacity-50 pointer-events-none')}>
+    <div className={cn('md:space-y-1', isExpanded && 'md:space-y-0 md:rounded-md md:border md:border-secondary md:border-l-2 md:border-l-primary md:bg-card', isDeleting && 'opacity-50 pointer-events-none')}>
       <div className="md:group group">
         <div className="md:hidden">
           <div
